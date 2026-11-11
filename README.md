@@ -12,4 +12,4 @@ Data is stored in the phone browser (localStorage). Use the backup / CSV buttons
 - Android (Chrome): menu -> "Install app" / "Add to Home screen"
 - iPhone (Safari): Share -> "Add to Home Screen"
 
-After the first open it works offline. After you change a file, bump `CACHE = "naap-v1"` in `sw.js` (v2, v3...) so phones pick up the update.
+After the first open it works offline. After you change a file, bump `CACHE = "naap-v2"` in `sw.js` (v2, v3...) so phones pick up the update.

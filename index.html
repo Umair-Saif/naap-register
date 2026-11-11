@@ -10,18 +10,19 @@
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-title" content="Naap">
-<title>ناپ رجسٹر – Naap Register</title>
+<title>ناپ رجسٹر</title>
 <style>
 :root{--bg:#f3f1f8;--surface:#fff;--ink:#1d1b3a;--mute:#6b6889;--line:#dcd8ea;--accent:#3b2fb0;--accent-ink:#fff;--danger:#b3261e;
 box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
-@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){color-scheme:dark;--bg:#14132a;--surface:#1e1d3a;--ink:#ece9ff;--mute:#a09cc8;--line:#38366a;--accent:#8f86ff;--accent-ink:#14132a;--danger:#ff8a80}}
-:root[data-theme="dark"]{color-scheme:dark;--bg:#14132a;--surface:#1e1d3a;--ink:#ece9ff;--mute:#a09cc8;--line:#38366a;--accent:#8f86ff;--accent-ink:#14132a;--danger:#ff8a80}
+@media (prefers-color-scheme:dark){:root{color-scheme:dark;--bg:#14132a;--surface:#1e1d3a;--ink:#ece9ff;--mute:#a09cc8;--line:#38366a;--accent:#8f86ff;--accent-ink:#14132a;--danger:#ff8a80}}
 html{scroll-padding-top:env(safe-area-inset-top,0px)}
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font-family:"Noto Nastaliq Urdu","Jameel Noori Nastaleeq","Segoe UI",Tahoma,sans-serif;line-height:1.9}
+html[lang="en"] body{font-family:system-ui,-apple-system,"Segoe UI",Roboto,sans-serif;line-height:1.5}
 main{max-width:900px;margin:0 auto;padding:16px}
+.top{display:flex;align-items:center;justify-content:space-between;gap:8px}
 h1{font-size:1.5rem;margin:8px 0 2px}
-.sub{color:var(--mute);font-size:.8rem;margin:0 0 14px;font-family:system-ui,sans-serif;direction:ltr;text-align:right}
+.sub{color:var(--mute);font-size:.85rem;margin:0 0 14px}
 .bar{display:flex;gap:8px;margin-bottom:12px}
 input,select,textarea{font:inherit;color:var(--ink);background:var(--surface);border:1px solid var(--line);border-radius:6px;padding:6px 10px;width:100%}
 input:focus-visible,button:focus-visible,tr:focus-visible{outline:2px solid var(--accent);outline-offset:1px}
@@ -30,7 +31,7 @@ button.primary{background:var(--accent);color:var(--accent-ink);border-color:var
 button.del{color:var(--danger)}
 .wrap{overflow-x:auto;background:var(--surface);border:1px solid var(--line);border-radius:8px}
 table{width:100%;border-collapse:collapse;min-width:560px}
-th,td{padding:6px 12px;text-align:right;border-bottom:1px solid var(--line);font-size:.95rem}
+th,td{padding:6px 12px;text-align:start;border-bottom:1px solid var(--line);font-size:.95rem}
 th{color:var(--mute);font-weight:600;font-size:.8rem}
 tbody tr{cursor:pointer}
 tbody tr:hover{background:var(--bg)}
@@ -41,6 +42,7 @@ dialog::backdrop{background:rgba(10,8,30,.55)}
 .grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(130px,1fr));gap:10px 12px;margin:12px 0}
 label{display:block;font-size:.85rem;color:var(--mute)}
 label input{margin-top:2px;font-family:system-ui,sans-serif;text-align:center}
+label input.txt{text-align:start;font-family:inherit}
 .full{grid-column:1/-1}
 .sec{font-size:.9rem;font-weight:700;margin:14px 0 0;border-top:1px solid var(--line);padding-top:8px}
 .acts{display:flex;gap:8px;justify-content:flex-start;margin-top:8px;position:sticky;bottom:-16px;background:var(--surface);padding:10px 0 4px;border-top:1px solid var(--line)}
@@ -57,7 +59,7 @@ td{border:0;padding:0;width:auto;font-size:.9rem}
 td.nm{width:100%;font-size:1.1rem;font-weight:700}
 td.ph{width:100%;color:var(--mute)}
 td[data-l]::before{content:attr(data-l) " ";color:var(--mute);font-size:.8rem}
-#add{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));left:16px;z-index:5;padding:12px 22px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
+#add{position:fixed;bottom:calc(16px + env(safe-area-inset-bottom,0px));inset-inline-end:16px;z-index:5;padding:12px 22px;border-radius:999px;box-shadow:0 4px 14px rgba(0,0,0,.35)}
 dialog{width:100%;max-width:none;height:100%;max-height:none;border-radius:0;margin:0;border:0;padding:calc(12px + env(safe-area-inset-top,0px)) 14px 12px}
 .grid{grid-template-columns:repeat(2,1fr)}
 input{padding:10px;font-size:16px}
@@ -68,60 +70,83 @@ button{padding:10px 16px}
 </head>
 <body>
 <main>
-<h1>ناپ رجسٹر</h1>
-<p class="sub">Click a record to open and edit it</p>
+<div class="top">
+<h1 data-i="title"></h1>
+<button id="lang" aria-label="Language"></button>
+</div>
+<p class="sub" data-i="hint"></p>
 <div class="bar">
-<input id="q" type="search" placeholder="نام یا فون سے تلاش کریں" aria-label="Search">
-<button class="primary" id="add">+ نیا ریکارڈ</button>
+<input id="q" type="search" data-ph="search" aria-label="Search" class="txt">
+<button class="primary" id="add" data-i="add"></button>
 </div>
 <div class="tools">
-<button id="xcsv">Excel / CSV میں محفوظ کریں</button>
-<button id="xjson">بیک اپ فائل</button>
-<button id="impb">بیک اپ بحال کریں</button>
+<button id="xcsv" data-i="csv"></button>
+<button id="xjson" data-i="bk"></button>
+<button id="impb" data-i="rs"></button>
 <input type="file" id="imp" accept=".json,application/json" hidden>
 </div>
 <div class="wrap"><table>
-<thead><tr><th>نام</th><th>فون</th><th>قمیض</th><th>بازو</th><th>شلوار</th><th>تاریخ</th></tr></thead>
+<thead><tr><th data-i="name"></th><th data-i="phone"></th><th data-f="qameez"></th><th data-f="bazu"></th><th data-f="shalwar"></th><th data-i="date"></th></tr></thead>
 <tbody id="rows"></tbody></table>
-<div class="empty" id="empty" hidden>ابھی کوئی ریکارڈ نہیں۔ &quot;نیا ریکارڈ&quot; دبائیں۔</div></div>
+<div class="empty" id="empty" hidden data-i="empty"></div></div>
 </main>
 
 <dialog id="dlg">
 <form method="dialog" id="f" style="margin:0">
 <div class="grid">
-<label class="full">نام (Name)<input name="name" required style="text-align:right"></label>
-<label>فون (Phone)<input name="phone" inputmode="tel" dir="ltr"></label>
-<label>تاریخ (Date)<input name="date" type="date"></label>
+<label class="full"><span data-i="name"></span><input name="name" required class="txt"></label>
+<label><span data-i="phone"></span><input name="phone" inputmode="tel" dir="ltr"></label>
+<label><span data-i="date"></span><input name="date" type="date"></label>
 </div>
-<div class="sec">قمیض</div>
+<div class="sec" data-i="secShirt"></div>
 <div class="grid" id="g1"></div>
-<div class="sec">شلوار</div>
+<div class="sec" data-i="secShalwar"></div>
 <div class="grid" id="g2"></div>
-<div class="grid"><label class="full">نوٹ (Notes)<input name="notes" style="text-align:right"></label></div>
+<div class="grid"><label class="full"><span data-i="notes"></span><input name="notes" class="txt"></label></div>
 <div class="acts">
-<button type="submit" class="primary" value="save">محفوظ کریں</button>
-<button type="button" id="cancel">بند کریں</button>
+<button type="submit" class="primary" data-i="save"></button>
+<button type="button" id="cancel" data-i="close"></button>
 <span class="sp"></span>
-<button type="button" class="del" id="del">حذف</button>
+<button type="button" class="del" id="del" data-i="del"></button>
 </div>
 </form>
 </dialog>
 
 <script>
-var SHIRT=[["qameez","قمیض"],["bazu","بازو"],["tera","تیرہ"],["ghera","گھیرا"],["collar","کالر"],["bain","بین"],["chest","چھاتی"]];
-var SHALWAR=[["shalwar","شلوار"],["plaza","پلازہ"],["ghera2","گھیرا (شلوار)"],["paancha1","پائنچہ ۱"],["paancha2","پائنچہ ۲"],["paancha3","پائنچہ ۳"]];
-var KEY="naap-records-v1",recs=[],cur=null;
+var T={
+ur:{title:"ناپ رجسٹر",hint:"کسی ریکارڈ پر کلک کریں، وہ کھل جائے گا اور ایڈٹ ہو سکے گا",search:"نام یا فون سے تلاش کریں",add:"+ نیا ریکارڈ",csv:"Excel / CSV میں محفوظ کریں",bk:"بیک اپ فائل",rs:"بیک اپ بحال کریں",name:"نام",phone:"فون",date:"تاریخ",notes:"نوٹ",save:"محفوظ کریں",close:"بند کریں",del:"حذف",empty:"ابھی کوئی ریکارڈ نہیں۔ “نیا ریکارڈ” دبائیں۔",secShirt:"قمیض",secShalwar:"شلوار",none:"ابھی کوئی ریکارڈ نہیں۔",restore:"ریکارڈ بحال کریں؟ موجودہ ریکارڈ بدل جائیں گے۔",bad:"یہ بیک اپ فائل درست نہیں۔",delq:"یہ ریکارڈ حذف کریں؟",storeErr:"براؤزر میں ڈیٹا محفوظ نہیں ہو سکا۔",lang:"English"},
+en:{title:"Naap Register",hint:"Tap a record to open it and edit",search:"Search by name or phone",add:"+ New record",csv:"Save as Excel / CSV",bk:"Backup file",rs:"Restore backup",name:"Name",phone:"Phone",date:"Date",notes:"Notes",save:"Save",close:"Close",del:"Delete",empty:"No records yet. Tap “New record”.",secShirt:"Shirt (Qameez)",secShalwar:"Shalwar",none:"No records yet.",restore:"records will replace the current ones. Continue?",bad:"This is not a valid backup file.",delq:"Delete this record?",storeErr:"Could not save data in this browser.",lang:"اردو"}
+};
+var FL={
+ur:{qameez:"قمیض",bazu:"بازو",tera:"تیرہ",ghera:"گھیرا",collar:"کالر",bain:"بین",chest:"چھاتی",shalwar:"شلوار",plaza:"پلازہ",ghera2:"گھیرا (شلوار)",paancha1:"پائنچہ ۱",paancha2:"پائنچہ ۲",paancha3:"پائنچہ ۳"},
+en:{qameez:"Qameez",bazu:"Sleeve",tera:"Teera",ghera:"Ghera",collar:"Collar",bain:"Bain",chest:"Chest",shalwar:"Shalwar",plaza:"Plaza",ghera2:"Shalwar ghera",paancha1:"Paancha 1",paancha2:"Paancha 2",paancha3:"Paancha 3"}
+};
+var SHIRT=["qameez","bazu","tera","ghera","collar","bain","chest"];
+var SHALWAR=["shalwar","plaza","ghera2","paancha1","paancha2","paancha3"];
+var KEY="naap-records-v1",LK="naap-lang",recs=[],cur=null,LANG="ur";
+try{LANG=localStorage.getItem(LK)==="en"?"en":"ur"}catch(e){}
+function t(k){return T[LANG][k]}
+function fl(k){return FL[LANG][k]}
 function load(){try{recs=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){recs=[]}}
-function save(){try{localStorage.setItem(KEY,JSON.stringify(recs))}catch(e){alert("Browser storage is unavailable; changes will not be kept after closing.")}}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(recs))}catch(e){alert(t("storeErr"))}}
 var f=document.getElementById("f"),dlg=document.getElementById("dlg");
-function fields(id,list){document.getElementById(id).innerHTML=list.map(function(x){return '<label>'+x[1]+'<input name="'+x[0]+'" inputmode="decimal" dir="ltr"></label>'}).join("")}
-fields("g1",SHIRT);fields("g2",SHALWAR);
+function fields(id,list){document.getElementById(id).innerHTML=list.map(function(k){return '<label>'+fl(k)+'<input name="'+k+'" inputmode="decimal" dir="ltr"></label>'}).join("")}
 function esc(s){return String(s==null?"":s).replace(/[&<>"]/g,function(c){return{"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;"}[c]})}
+function applyLang(){
+document.documentElement.lang=LANG;
+document.documentElement.dir=LANG==="ur"?"rtl":"ltr";
+document.title=t("title");
+document.getElementById("lang").textContent=t("lang");
+Array.prototype.forEach.call(document.querySelectorAll("[data-i]"),function(el){el.textContent=t(el.getAttribute("data-i"))});
+Array.prototype.forEach.call(document.querySelectorAll("[data-f]"),function(el){el.textContent=fl(el.getAttribute("data-f"))});
+Array.prototype.forEach.call(document.querySelectorAll("[data-ph]"),function(el){el.placeholder=t(el.getAttribute("data-ph"))});
+fields("g1",SHIRT);fields("g2",SHALWAR);
+render()}
 function render(){
-var t=document.getElementById("q").value.trim().toLowerCase();
-var list=recs.filter(function(r){return !t||(r.name||"").toLowerCase().indexOf(t)>-1||(r.phone||"").indexOf(t)>-1});
+var q=document.getElementById("q").value.trim().toLowerCase();
+var list=recs.filter(function(r){return !q||(r.name||"").toLowerCase().indexOf(q)>-1||(r.phone||"").indexOf(q)>-1});
 document.getElementById("rows").innerHTML=list.map(function(r){
-return '<tr tabindex="0" data-id="'+r.id+'"><td class="nm">'+esc(r.name)+'</td><td class="n ph">'+esc(r.phone)+'</td><td class="n" data-l="قمیض">'+esc(r.qameez)+'</td><td class="n" data-l="بازو">'+esc(r.bazu)+'</td><td class="n" data-l="شلوار">'+esc(r.shalwar)+'</td><td class="n" data-l="تاریخ">'+esc(r.date)+'</td></tr>'}).join("");
+return '<tr tabindex="0" data-id="'+r.id+'"><td class="nm">'+esc(r.name)+'</td><td class="n ph">'+esc(r.phone)+'</td><td class="n" data-l="'+fl("qameez")+'">'+esc(r.qameez)+'</td><td class="n" data-l="'+fl("bazu")+'">'+esc(r.bazu)+'</td><td class="n" data-l="'+fl("shalwar")+'">'+esc(r.shalwar)+'</td><td class="n" data-l="'+t("date")+'">'+esc(r.date)+'</td></tr>'}).join("");
 document.getElementById("empty").hidden=list.length>0}
 function openRec(id){
 cur=recs.filter(function(r){return r.id===id})[0]||null;
@@ -135,39 +160,47 @@ document.getElementById("rows").addEventListener("keydown",function(e){if(e.key=
 document.getElementById("add").onclick=function(){openRec(null)};
 document.getElementById("cancel").onclick=function(){dlg.close()};
 document.getElementById("q").oninput=render;
+document.getElementById("lang").onclick=function(){
+LANG=LANG==="ur"?"en":"ur";
+try{localStorage.setItem(LK,LANG)}catch(e){}
+applyLang()};
 f.addEventListener("submit",function(){
 var o=cur||{id:String(Date.now())};
 Array.prototype.forEach.call(f.elements,function(el){if(el.name)o[el.name]=el.value.trim()});
 if(!cur)recs.unshift(o);
 save();render()});
 document.getElementById("del").onclick=function(){
-if(cur&&confirm("یہ ریکارڈ حذف کریں؟")){recs=recs.filter(function(r){return r!==cur});save();render();dlg.close()}};
-var COLS=[["name","نام"],["phone","فون"],["date","تاریخ"]].concat(SHIRT,SHALWAR,[["notes","نوٹ"]]);
+if(cur&&confirm(t("delq"))){recs=recs.filter(function(r){return r!==cur});save();render();dlg.close()}};
 function cell(v){v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
 function today(){return new Date().toISOString().slice(0,10)}
+function cols(){
+var c=[["name",t("name")],["phone",t("phone")],["date",t("date")]];
+SHIRT.concat(SHALWAR).forEach(function(k){c.push([k,fl(k)])});
+c.push(["notes",t("notes")]);return c}
 function saveFile(name,data){
 var type=name.slice(-4)===".csv"?"text/csv;charset=utf-8":"application/json";
 var u=URL.createObjectURL(new Blob([data],{type:type}));
 var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
 setTimeout(function(){URL.revokeObjectURL(u)},1500)}
 document.getElementById("xcsv").onclick=function(){
-if(!recs.length){alert("ابھی کوئی ریکارڈ نہیں۔");return}
-var lines=[COLS.map(function(c){return cell(c[1])}).join(",")];
-recs.forEach(function(r){lines.push(COLS.map(function(c){return cell(r[c[0]])}).join(","))});
+if(!recs.length){alert(t("none"));return}
+var c=cols(),lines=[c.map(function(x){return cell(x[1])}).join(",")];
+recs.forEach(function(r){lines.push(c.map(function(x){return cell(r[x[0]])}).join(","))});
 saveFile("naap-register-"+today()+".csv","\ufeff"+lines.join("\r\n"))};
 document.getElementById("xjson").onclick=function(){
-if(!recs.length){alert("ابھی کوئی ریکارڈ نہیں۔");return}
+if(!recs.length){alert(t("none"));return}
 saveFile("naap-backup-"+today()+".json",JSON.stringify(recs,null,1))};
 document.getElementById("impb").onclick=function(){document.getElementById("imp").click()};
 document.getElementById("imp").onchange=function(e){
-var fl=e.target.files[0];if(!fl)return;
+var fl2=e.target.files[0];if(!fl2)return;
 var rd=new FileReader();
 rd.onload=function(){try{
 var a=JSON.parse(rd.result);if(!Array.isArray(a))throw new Error("bad");
-if(!confirm(a.length+" ریکارڈ بحال کریں؟ موجودہ ریکارڈ بدل جائیں گے۔"))return;
-recs=a;save();render()}catch(x){alert("یہ بیک اپ فائل درست نہیں۔")}};
-rd.readAsText(fl);e.target.value=""};
-load();render();
+var msg=LANG==="ur"?a.length+" "+t("restore"):a.length+" "+t("restore");
+if(!confirm(msg))return;
+recs=a;save();render()}catch(x){alert(t("bad"))}};
+rd.readAsText(fl2);e.target.value=""};
+load();applyLang();
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>
 </body>
