@@ -49,6 +49,7 @@ label input.txt{text-align:start;font-family:inherit}
 .acts .sp{flex:1}
 .tools{display:flex;gap:8px;flex-wrap:wrap;margin:0 0 12px}
 .tools button{font-size:.85rem;padding:4px 12px}
+.sst{font-size:.8rem;color:var(--mute);align-self:center}
 @media (max-width:640px){
 main{padding:12px 12px 96px}
 .wrap{overflow:visible;border:0;background:none}
@@ -84,6 +85,8 @@ button{padding:10px 16px}
 <button id="xjson" data-i="bk"></button>
 <button id="impb" data-i="rs"></button>
 <input type="file" id="imp" accept=".json,application/json" hidden>
+<button id="syncb" data-i="syncset"></button>
+<span class="sst" id="sst"></span>
 </div>
 <div class="wrap"><table>
 <thead><tr><th data-i="name"></th><th data-i="phone"></th><th data-f="qameez"></th><th data-f="bazu"></th><th data-f="shalwar"></th><th data-i="date"></th></tr></thead>
@@ -112,10 +115,22 @@ button{padding:10px 16px}
 </form>
 </dialog>
 
+<dialog id="dlg2">
+<div style="margin:0">
+<h2 style="font-size:1.1rem;margin:0 0 4px" data-i="syncset"></h2>
+<p class="sub" data-i="syncHelp"></p>
+<div class="grid">
+<label class="full"><span data-i="url"></span><input id="s_url" class="txt" dir="ltr" placeholder="https://script.google.com/macros/s/.../exec"></label>
+<label class="full"><span data-i="skey"></span><input id="s_key" class="txt" dir="ltr"></label>
+</div>
+<div class="acts"><button type="button" class="primary" id="s_save" data-i="saveSync"></button><button type="button" id="s_close" data-i="close"></button></div>
+</div>
+</dialog>
+
 <script>
 var T={
-ur:{title:"ناپ رجسٹر",hint:"کسی ریکارڈ پر کلک کریں، وہ کھل جائے گا اور ایڈٹ ہو سکے گا",search:"نام یا فون سے تلاش کریں",add:"+ نیا ریکارڈ",csv:"Excel / CSV میں محفوظ کریں",bk:"بیک اپ فائل",rs:"بیک اپ بحال کریں",name:"نام",phone:"فون",date:"تاریخ",notes:"نوٹ",save:"محفوظ کریں",close:"بند کریں",del:"حذف",empty:"ابھی کوئی ریکارڈ نہیں۔ “نیا ریکارڈ” دبائیں۔",secShirt:"قمیض",secShalwar:"شلوار",none:"ابھی کوئی ریکارڈ نہیں۔",restore:"ریکارڈ بحال کریں؟ موجودہ ریکارڈ بدل جائیں گے۔",bad:"یہ بیک اپ فائل درست نہیں۔",delq:"یہ ریکارڈ حذف کریں؟",storeErr:"براؤزر میں ڈیٹا محفوظ نہیں ہو سکا۔",lang:"English"},
-en:{title:"Naap Register",hint:"Tap a record to open it and edit",search:"Search by name or phone",add:"+ New record",csv:"Save as Excel / CSV",bk:"Backup file",rs:"Restore backup",name:"Name",phone:"Phone",date:"Date",notes:"Notes",save:"Save",close:"Close",del:"Delete",empty:"No records yet. Tap “New record”.",secShirt:"Shirt (Qameez)",secShalwar:"Shalwar",none:"No records yet.",restore:"records will replace the current ones. Continue?",bad:"This is not a valid backup file.",delq:"Delete this record?",storeErr:"Could not save data in this browser.",lang:"اردو"}
+ur:{title:"ناپ رجسٹر",hint:"کسی ریکارڈ پر کلک کریں، وہ کھل جائے گا اور ایڈٹ ہو سکے گا",search:"نام یا فون سے تلاش کریں",add:"+ نیا ریکارڈ",csv:"Excel / CSV میں محفوظ کریں",bk:"بیک اپ فائل",rs:"بیک اپ بحال کریں",name:"نام",phone:"فون",date:"تاریخ",notes:"نوٹ",save:"محفوظ کریں",close:"بند کریں",del:"حذف",empty:"ابھی کوئی ریکارڈ نہیں۔ “نیا ریکارڈ” دبائیں۔",secShirt:"قمیض",secShalwar:"شلوار",none:"ابھی کوئی ریکارڈ نہیں۔",restore:"ریکارڈ بحال کریں؟ موجودہ ریکارڈ بدل جائیں گے۔",bad:"یہ بیک اپ فائل درست نہیں۔",delq:"یہ ریکارڈ حذف کریں؟",storeErr:"براؤزر میں ڈیٹا محفوظ نہیں ہو سکا۔",lang:"English",syncset:"گوگل شیٹ سنک",syncHelp:"Apps Script کا Web app URL اور خفیہ کوڈ یہاں لگائیں۔ ڈیٹا آپ کی اپنی گوگل شیٹ میں محفوظ ہوگا۔",url:"Web app URL",skey:"خفیہ کوڈ (Secret)",saveSync:"محفوظ کریں اور سنک کریں",stNone:"سنک بند ہے (ڈیٹا صرف اس فون میں)",stBusy:"سنک ہو رہا ہے…",stOk:"سنک مکمل ✓ ",stErr:"سنک نہیں ہو سکا، دوبارہ کوشش ہوگی",stOff:"انٹرنیٹ نہیں، بعد میں سنک ہوگا"},
+en:{title:"Naap Register",hint:"Tap a record to open it and edit",search:"Search by name or phone",add:"+ New record",csv:"Save as Excel / CSV",bk:"Backup file",rs:"Restore backup",name:"Name",phone:"Phone",date:"Date",notes:"Notes",save:"Save",close:"Close",del:"Delete",empty:"No records yet. Tap “New record”.",secShirt:"Shirt (Qameez)",secShalwar:"Shalwar",none:"No records yet.",restore:"records will replace the current ones. Continue?",bad:"This is not a valid backup file.",delq:"Delete this record?",storeErr:"Could not save data in this browser.",lang:"اردو",syncset:"Google Sheet sync",syncHelp:"Paste your Apps Script Web app URL and secret. Your data is saved in your own Google Sheet.",url:"Web app URL",skey:"Secret code",saveSync:"Save and sync",stNone:"Sync is off (data only on this phone)",stBusy:"Syncing…",stOk:"Synced ✓ ",stErr:"Sync failed, will retry",stOff:"Offline, will sync later"}
 };
 var FL={
 ur:{qameez:"قمیض",bazu:"بازو",tera:"تیرہ",ghera:"گھیرا",collar:"کالر",bain:"بین",chest:"چھاتی",shalwar:"شلوار",plaza:"پلازہ",ghera2:"گھیرا (شلوار)",paancha1:"پائنچہ ۱",paancha2:"پائنچہ ۲",paancha3:"پائنچہ ۳"},
@@ -127,7 +142,8 @@ var KEY="naap-records-v1",LK="naap-lang",recs=[],cur=null,LANG="ur";
 try{LANG=localStorage.getItem(LK)==="en"?"en":"ur"}catch(e){}
 function t(k){return T[LANG][k]}
 function fl(k){return FL[LANG][k]}
-function load(){try{recs=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){recs=[]}}
+function load(){try{recs=JSON.parse(localStorage.getItem(KEY)||"[]")}catch(e){recs=[]}
+recs.forEach(function(r){if(!r.updatedAt)r.updatedAt=Number(r.id)||Date.now()})}
 function save(){try{localStorage.setItem(KEY,JSON.stringify(recs))}catch(e){alert(t("storeErr"))}}
 var f=document.getElementById("f"),dlg=document.getElementById("dlg");
 function fields(id,list){document.getElementById(id).innerHTML=list.map(function(k){return '<label>'+fl(k)+'<input name="'+k+'" inputmode="decimal" dir="ltr"></label>'}).join("")}
@@ -141,10 +157,10 @@ Array.prototype.forEach.call(document.querySelectorAll("[data-i]"),function(el){
 Array.prototype.forEach.call(document.querySelectorAll("[data-f]"),function(el){el.textContent=fl(el.getAttribute("data-f"))});
 Array.prototype.forEach.call(document.querySelectorAll("[data-ph]"),function(el){el.placeholder=t(el.getAttribute("data-ph"))});
 fields("g1",SHIRT);fields("g2",SHALWAR);
-render()}
+render();setSt(lastSt,lastExtra)}
 function render(){
 var q=document.getElementById("q").value.trim().toLowerCase();
-var list=recs.filter(function(r){return !q||(r.name||"").toLowerCase().indexOf(q)>-1||(r.phone||"").indexOf(q)>-1});
+var list=recs.filter(function(r){return !r.deleted&&(!q||(r.name||"").toLowerCase().indexOf(q)>-1||(r.phone||"").indexOf(q)>-1)});
 document.getElementById("rows").innerHTML=list.map(function(r){
 return '<tr tabindex="0" data-id="'+r.id+'"><td class="nm">'+esc(r.name)+'</td><td class="n ph">'+esc(r.phone)+'</td><td class="n" data-l="'+fl("qameez")+'">'+esc(r.qameez)+'</td><td class="n" data-l="'+fl("bazu")+'">'+esc(r.bazu)+'</td><td class="n" data-l="'+fl("shalwar")+'">'+esc(r.shalwar)+'</td><td class="n" data-l="'+t("date")+'">'+esc(r.date)+'</td></tr>'}).join("");
 document.getElementById("empty").hidden=list.length>0}
@@ -167,10 +183,11 @@ applyLang()};
 f.addEventListener("submit",function(){
 var o=cur||{id:String(Date.now())};
 Array.prototype.forEach.call(f.elements,function(el){if(el.name)o[el.name]=el.value.trim()});
+o.updatedAt=Date.now();o.deleted=false;
 if(!cur)recs.unshift(o);
-save();render()});
+save();render();queueSync()});
 document.getElementById("del").onclick=function(){
-if(cur&&confirm(t("delq"))){recs=recs.filter(function(r){return r!==cur});save();render();dlg.close()}};
+if(cur&&confirm(t("delq"))){cur.deleted=true;cur.updatedAt=Date.now();save();render();dlg.close();queueSync()}};
 function cell(v){v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
 function today(){return new Date().toISOString().slice(0,10)}
 function cols(){
@@ -183,13 +200,15 @@ var u=URL.createObjectURL(new Blob([data],{type:type}));
 var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
 setTimeout(function(){URL.revokeObjectURL(u)},1500)}
 document.getElementById("xcsv").onclick=function(){
-if(!recs.length){alert(t("none"));return}
+var live=recs.filter(function(r){return !r.deleted});
+if(!live.length){alert(t("none"));return}
 var c=cols(),lines=[c.map(function(x){return cell(x[1])}).join(",")];
-recs.forEach(function(r){lines.push(c.map(function(x){return cell(r[x[0]])}).join(","))});
+live.forEach(function(r){lines.push(c.map(function(x){return cell(r[x[0]])}).join(","))});
 saveFile("naap-register-"+today()+".csv","\ufeff"+lines.join("\r\n"))};
 document.getElementById("xjson").onclick=function(){
-if(!recs.length){alert(t("none"));return}
-saveFile("naap-backup-"+today()+".json",JSON.stringify(recs,null,1))};
+var live=recs.filter(function(r){return !r.deleted});
+if(!live.length){alert(t("none"));return}
+saveFile("naap-backup-"+today()+".json",JSON.stringify(live,null,1))};
 document.getElementById("impb").onclick=function(){document.getElementById("imp").click()};
 document.getElementById("imp").onchange=function(e){
 var fl2=e.target.files[0];if(!fl2)return;
@@ -198,9 +217,51 @@ rd.onload=function(){try{
 var a=JSON.parse(rd.result);if(!Array.isArray(a))throw new Error("bad");
 var msg=LANG==="ur"?a.length+" "+t("restore"):a.length+" "+t("restore");
 if(!confirm(msg))return;
-recs=a;save();render()}catch(x){alert(t("bad"))}};
+recs=a.map(function(r){r.updatedAt=Date.now();r.deleted=false;return r});save();render();queueSync()}catch(x){alert(t("bad"))}};
 rd.readAsText(fl2);e.target.value=""};
-load();applyLang();
+var SK="naap-sync",syncT=null,syncing=false,lastSt="stNone",lastExtra="";
+function cfg(){try{return JSON.parse(localStorage.getItem(SK)||"null")}catch(e){return null}}
+function setSt(k,extra){lastSt=k;lastExtra=extra||"";document.getElementById("sst").textContent=t(k)+lastExtra}
+function queueSync(){clearTimeout(syncT);syncT=setTimeout(doSync,800)}
+function doSync(){
+var c=cfg();
+if(!c||!c.url||!c.key){setSt("stNone");return Promise.resolve()}
+if(syncing)return Promise.resolve();
+if(navigator.onLine===false){setSt("stOff");return Promise.resolve()}
+syncing=true;setSt("stBusy");
+var start=Date.now(),since=c.last||0;
+var push=recs.filter(function(r){return (r.updatedAt||0)>since});
+return fetch(c.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({key:c.key,records:push})})
+.then(function(r){return r.json()})
+.then(function(j){
+if(!j||!j.ok)throw new Error("sync");
+var map={};recs.forEach(function(r){map[r.id]=r});
+j.records.forEach(function(rr){
+rr.id=String(rr.id);rr.updatedAt=Number(rr.updatedAt)||0;rr.deleted=(rr.deleted===true||rr.deleted==="true");
+var l=map[rr.id];
+if(!l){recs.push(rr)}else if(rr.updatedAt>(l.updatedAt||0)){recs[recs.indexOf(l)]=rr}});
+recs.sort(function(a,b){return (Number(b.id)||0)-(Number(a.id)||0)});
+save();
+c.last=start-2000;
+try{localStorage.setItem(SK,JSON.stringify(c))}catch(e){}
+render();
+setSt("stOk",new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))})
+.catch(function(){setSt("stErr")})
+.then(function(){syncing=false})}
+var dlg2=document.getElementById("dlg2");
+document.getElementById("syncb").onclick=function(){
+var c=cfg()||{};
+document.getElementById("s_url").value=c.url||"";
+document.getElementById("s_key").value=c.key||"";
+dlg2.showModal()};
+document.getElementById("s_close").onclick=function(){dlg2.close()};
+document.getElementById("s_save").onclick=function(){
+var u=document.getElementById("s_url").value.trim(),k=document.getElementById("s_key").value.trim();
+try{if(u&&k)localStorage.setItem(SK,JSON.stringify({url:u,key:k,last:0}));else localStorage.removeItem(SK)}catch(e){}
+dlg2.close();doSync()};
+window.addEventListener("online",doSync);
+document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")doSync()});
+load();applyLang();doSync();
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>
 </body>
