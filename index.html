@@ -58,6 +58,19 @@ label input.txt{text-align:start;font-family:inherit}
 .checks{display:flex;gap:16px;flex-wrap:wrap;flex:1}
 .checks label{display:flex;align-items:center;gap:6px;color:var(--ink);font-size:.95rem;cursor:pointer}
 .checks input{width:22px;height:22px;padding:0;margin:0;flex:none}
+#sheetwrap{overflow:auto;max-height:75vh;background:var(--surface);border:1px solid var(--line);border-radius:8px}
+#sheet{min-width:max-content;border-collapse:separate;border-spacing:0}
+#sheet th,#sheet td{padding:4px 6px;border-bottom:1px solid var(--line);white-space:nowrap}
+#sheet th{position:sticky;top:0;background:var(--surface);color:var(--mute);font-weight:600;font-size:.78rem;z-index:2}
+#sheet input:not([type=checkbox]){width:100px;padding:4px 6px;font-size:.9rem}
+#sheet select{width:104px;padding:4px 6px;font-size:.9rem}
+#sheet input[type=checkbox]{width:20px;height:20px;padding:0}
+#sheet .sk1{position:sticky;inset-inline-start:0;background:var(--surface);z-index:1}
+#sheet .sk2{position:sticky;inset-inline-start:76px;background:var(--surface);z-index:1}
+#sheet th.sk1,#sheet th.sk2{z-index:3}
+#sheet td.sk1 input{width:64px}
+#sheet td.sk2 input{width:130px}
+#sheet button.x{padding:2px 8px;color:var(--danger)}
 @media (max-width:640px){
 main{padding:12px 12px 96px}
 .wrap{overflow:visible;border:0;background:none}
@@ -74,6 +87,14 @@ dialog{width:100%;max-width:none;height:100%;max-height:none;border-radius:0;mar
 .grid{grid-template-columns:repeat(2,1fr)}
 input{padding:10px;font-size:16px}
 select{padding:10px;font-size:16px}
+#sheet{display:table;min-width:max-content;width:auto}
+#sheet thead{display:table-header-group}
+#sheet tbody{display:table-row-group}
+#sheet tr{display:table-row;background:none;border:0;margin:0;padding:0}
+#sheet th,#sheet td{display:table-cell;width:auto;padding:4px 6px;border-bottom:1px solid var(--line)}
+#sheet td::before{content:none}
+#sheet input:not([type=checkbox]),#sheet select{font-size:16px;padding:4px 6px}
+#sheet td.sk2 input{width:130px}
 .frow .fl{flex-basis:76px;font-size:.9rem}
 button{padding:10px 16px}
 .acts{bottom:0;padding-bottom:calc(8px + env(safe-area-inset-bottom,0px))}
@@ -96,10 +117,12 @@ button{padding:10px 16px}
 <button id="xjson" data-i="bk"></button>
 <button id="impb" data-i="rs"></button>
 <input type="file" id="imp" accept=".json,application/json" hidden>
+<button id="viewb"></button>
 <button id="syncb" data-i="syncset"></button>
 <span class="sst" id="sst"></span>
 </div>
-<div class="wrap"><table>
+<div id="sheetwrap" hidden><table id="sheet"></table></div>
+<div class="wrap" id="listwrap"><table>
 <thead><tr><th data-i="khata"></th><th data-i="name"></th><th data-i="phone"></th><th data-f="qameez"></th><th data-f="bazu"></th><th data-f="shalwar"></th><th data-i="date"></th></tr></thead>
 <tbody id="rows"></tbody></table>
 <div class="empty" id="empty" hidden data-i="empty"></div></div>
@@ -139,10 +162,11 @@ button{padding:10px 16px}
 </div>
 </dialog>
 
+<script src="config.js"></script>
 <script>
 var T={
-ur:{title:"ناپ رجسٹر",hint:"کسی ریکارڈ پر کلک کریں، وہ کھل جائے گا اور ایڈٹ ہو سکے گا",search:"نام یا فون سے تلاش کریں",add:"+ نیا ریکارڈ",csv:"Excel / CSV میں محفوظ کریں",bk:"بیک اپ فائل",rs:"بیک اپ بحال کریں",name:"نام",phone:"فون",date:"تاریخ",notes:"نوٹ",save:"محفوظ کریں",close:"بند کریں",del:"حذف",empty:"ابھی کوئی ریکارڈ نہیں۔ “نیا ریکارڈ” دبائیں۔",secShirt:"قمیض",secShalwar:"شلوار",none:"ابھی کوئی ریکارڈ نہیں۔",restore:"ریکارڈ بحال کریں؟ موجودہ ریکارڈ بدل جائیں گے۔",bad:"یہ بیک اپ فائل درست نہیں۔",delq:"یہ ریکارڈ حذف کریں؟",storeErr:"براؤزر میں ڈیٹا محفوظ نہیں ہو سکا۔",lang:"English",khata:"کھاتا نمبر",style:"اسٹائل",syncset:"گوگل شیٹ سنک",syncHelp:"Apps Script کا Web app URL اور خفیہ کوڈ یہاں لگائیں۔ ڈیٹا آپ کی اپنی گوگل شیٹ میں محفوظ ہوگا۔",url:"Web app URL",skey:"خفیہ کوڈ (Secret)",saveSync:"محفوظ کریں اور سنک کریں",stNone:"سنک بند ہے (ڈیٹا صرف اس فون میں)",stBusy:"سنک ہو رہا ہے…",stOk:"سنک مکمل ✓ ",stErr:"سنک نہیں ہو سکا، دوبارہ کوشش ہوگی",stOff:"انٹرنیٹ نہیں، بعد میں سنک ہوگا"},
-en:{title:"Naap Register",hint:"Tap a record to open it and edit",search:"Search by name or phone",add:"+ New record",csv:"Save as Excel / CSV",bk:"Backup file",rs:"Restore backup",name:"Name",phone:"Phone",date:"Date",notes:"Notes",save:"Save",close:"Close",del:"Delete",empty:"No records yet. Tap “New record”.",secShirt:"Shirt (Qameez)",secShalwar:"Shalwar",none:"No records yet.",restore:"records will replace the current ones. Continue?",bad:"This is not a valid backup file.",delq:"Delete this record?",storeErr:"Could not save data in this browser.",lang:"اردو",khata:"Account no.",style:"Style",syncset:"Google Sheet sync",syncHelp:"Paste your Apps Script Web app URL and secret. Your data is saved in your own Google Sheet.",url:"Web app URL",skey:"Secret code",saveSync:"Save and sync",stNone:"Sync is off (data only on this phone)",stBusy:"Syncing…",stOk:"Synced ✓ ",stErr:"Sync failed, will retry",stOff:"Offline, will sync later"}
+ur:{title:"ناپ رجسٹر",hint:"کسی ریکارڈ پر کلک کریں، وہ کھل جائے گا اور ایڈٹ ہو سکے گا",search:"کھاتا نمبر، نام یا فون سے تلاش کریں",add:"+ نیا ریکارڈ",csv:"Excel / CSV میں محفوظ کریں",bk:"بیک اپ فائل",rs:"بیک اپ بحال کریں",name:"نام",phone:"فون",date:"تاریخ",notes:"نوٹ",save:"محفوظ کریں",close:"بند کریں",del:"حذف",empty:"ابھی کوئی ریکارڈ نہیں۔ “نیا ریکارڈ” دبائیں۔",secShirt:"قمیض",secShalwar:"شلوار",none:"ابھی کوئی ریکارڈ نہیں۔",restore:"ریکارڈ بحال کریں؟ موجودہ ریکارڈ بدل جائیں گے۔",bad:"یہ بیک اپ فائل درست نہیں۔",delq:"یہ ریکارڈ حذف کریں؟",storeErr:"براؤزر میں ڈیٹا محفوظ نہیں ہو سکا۔",lang:"English",khata:"کھاتا نمبر",style:"اسٹائل",sheetV:"سارا ڈیٹا دیکھیں / ایڈٹ کریں",listV:"لسٹ ویو",openG:"گوگل شیٹ کھولیں",sheetUrl:"گوگل شیٹ کا لنک (اختیاری)",dupk:"یہ کھاتا نمبر پہلے سے کسی اور ریکارڈ میں موجود ہے۔",syncset:"گوگل شیٹ سنک",syncHelp:"Apps Script کا Web app URL اور خفیہ کوڈ یہاں لگائیں۔ ڈیٹا آپ کی اپنی گوگل شیٹ میں محفوظ ہوگا۔",url:"Web app URL",skey:"خفیہ کوڈ (Secret)",saveSync:"محفوظ کریں اور سنک کریں",stNone:"سنک بند ہے (ڈیٹا صرف اس فون میں)",stBusy:"سنک ہو رہا ہے…",stOk:"سنک مکمل ✓ ",stErr:"سنک نہیں ہو سکا، دوبارہ کوشش ہوگی",stOff:"انٹرنیٹ نہیں، بعد میں سنک ہوگا"},
+en:{title:"Naap Register",hint:"Tap a record to open it and edit",search:"Search by account no., name or phone",add:"+ New record",csv:"Save as Excel / CSV",bk:"Backup file",rs:"Restore backup",name:"Name",phone:"Phone",date:"Date",notes:"Notes",save:"Save",close:"Close",del:"Delete",empty:"No records yet. Tap “New record”.",secShirt:"Shirt (Qameez)",secShalwar:"Shalwar",none:"No records yet.",restore:"records will replace the current ones. Continue?",bad:"This is not a valid backup file.",delq:"Delete this record?",storeErr:"Could not save data in this browser.",lang:"اردو",khata:"Account no.",style:"Style",sheetV:"All data (edit)",listV:"List view",openG:"Open Google Sheet",sheetUrl:"Google Sheet link (optional)",dupk:"This account number already exists in another record.",syncset:"Google Sheet sync",syncHelp:"Paste your Apps Script Web app URL and secret. Your data is saved in your own Google Sheet.",url:"Web app URL",skey:"Secret code",saveSync:"Save and sync",stNone:"Sync is off (data only on this phone)",stBusy:"Syncing…",stOk:"Synced ✓ ",stErr:"Sync failed, will retry",stOff:"Offline, will sync later"}
 };
 var FL={
 ur:{qameez:"قمیض",bazu:"بازو",tera:"تیرہ",ghera:"گھیرا",collar:"کالر",bain:"بین",chest:"چھاتی",shalwar:"شلوار",plaza:"پلازہ",ghera2:"گھیرا (شلوار)",paancha1:"پائنچہ ۱",paancha2:"پائنچہ ۲",paancha3:"پائنچہ ۳"},
@@ -156,6 +180,10 @@ function ol(k){return OL[LANG][k]||k}
 function selOpts(key){return '<option value="">—</option>'+OPTS[key].map(function(o){return '<option value="'+o+'">'+ol(o)+'</option>'}).join("")}
 var SHIRT=[{l:"qameez",n:"qameez"},{l:"bazu",n:"bazu",s:"bazu_style"},{l:"tera",n:"tera"},{l:"ghera",n:"ghera",s:"ghera_style"},{l:"collar",n:"collar",s:"collar_style"},{l:"bain",n:"bain"},{l:"kanda",n:"kanda"},{l:"front",s:"front"},{l:"pocket",c:["pk_front","pk_side","pk_shalwar"]}];
 var SHALWAR=[{l:"shalwar",n:"shalwar"},{l:"pajama",n:"pajama"},{l:"shalwar_ghera",n:"ghera2"},{l:"pahncha",n:"pahncha"}];
+function kv(r){var n=parseFloat(r.khata);return isNaN(n)?Infinity:n}
+function byK(a,b){var x=kv(a),y=kv(b);if(x!==y)return x<y?-1:1;return (Number(a.id)||0)-(Number(b.id)||0)}
+function nextKhata(){var m=0;recs.forEach(function(r){if(!r.deleted){var n=parseFloat(r.khata);if(!isNaN(n)&&n>m)m=n}});return String(Math.floor(m)+1)}
+var VIEW="list";try{VIEW=localStorage.getItem("naap-view")==="sheet"?"sheet":"list"}catch(e){}
 var KEY="naap-records-v1",LK="naap-lang",recs=[],cur=null,LANG="ur";
 try{LANG=localStorage.getItem(LK)==="en"?"en":"ur"}catch(e){}
 function t(k){return T[LANG][k]}
@@ -183,14 +211,16 @@ fields("g1",SHIRT);fields("g2",SHALWAR);
 render();setSt(lastSt,lastExtra)}
 function render(){
 var q=document.getElementById("q").value.trim().toLowerCase();
-var list=recs.filter(function(r){return !r.deleted&&(!q||(r.khata||"").toLowerCase().indexOf(q)>-1||(r.name||"").toLowerCase().indexOf(q)>-1||(r.phone||"").indexOf(q)>-1)});
+var list=recs.filter(function(r){return !r.deleted&&(!q||(r.khata||"").toLowerCase().indexOf(q)>-1||(r.name||"").toLowerCase().indexOf(q)>-1||(r.phone||"").indexOf(q)>-1||(r.notes||"").toLowerCase().indexOf(q)>-1)});
+list.sort(byK);
 document.getElementById("rows").innerHTML=list.map(function(r){
 return '<tr tabindex="0" data-id="'+r.id+'"><td class="n kh" data-l="'+t("khata")+'">'+esc(r.khata)+'</td><td class="nm">'+esc(r.name)+'</td><td class="n ph">'+esc(r.phone)+'</td><td class="n" data-l="'+fl("qameez")+'">'+esc(r.qameez)+'</td><td class="n" data-l="'+fl("bazu")+'">'+esc(r.bazu)+'</td><td class="n" data-l="'+fl("shalwar")+'">'+esc(r.shalwar)+'</td><td class="n" data-l="'+t("date")+'">'+esc(r.date)+'</td></tr>'}).join("");
-document.getElementById("empty").hidden=list.length>0}
+document.getElementById("empty").hidden=list.length>0;
+renderSheet(list);applyView()}
 function openRec(id){
 cur=recs.filter(function(r){return r.id===id})[0]||null;
 f.reset();
-var d=cur||{date:new Date().toISOString().slice(0,10)};
+var d=cur||{date:new Date().toISOString().slice(0,10),khata:nextKhata()};
 Array.prototype.forEach.call(f.elements,function(el){if(!el.name)return;if(el.type==="checkbox")el.checked=d[el.name]==="1";else el.value=d[el.name]==null?"":d[el.name]});
 document.getElementById("del").style.visibility=cur?"visible":"hidden";
 dlg.showModal()}
@@ -208,31 +238,69 @@ var o=cur||{id:String(Date.now())};
 Array.prototype.forEach.call(f.elements,function(el){if(!el.name)return;o[el.name]=el.type==="checkbox"?(el.checked?"1":""):el.value.trim()});
 o.updatedAt=Date.now();o.deleted=false;
 if(!cur)recs.unshift(o);
-save();render();queueSync()});
+var dup=o.khata&&recs.some(function(x){return x!==o&&!x.deleted&&x.khata===o.khata});
+save();render();queueSync();
+if(dup)alert(t("dupk"))});
 document.getElementById("del").onclick=function(){
 if(cur&&confirm(t("delq"))){cur.deleted=true;cur.updatedAt=Date.now();save();render();dlg.close();queueSync()}};
 function cell(v){v=String(v==null?"":v);return /[",\n]/.test(v)?'"'+v.replace(/"/g,'""')+'"':v}
 function today(){return new Date().toISOString().slice(0,10)}
-function cols(){
-var c=[["khata",t("khata")],["name",t("name")],["phone",t("phone")],["date",t("date")]];
+function colDefs(){
+var c=[{k:"khata",h:t("khata"),ty:"n"},{k:"name",h:t("name"),ty:"t"},{k:"phone",h:t("phone"),ty:"t"},{k:"date",h:t("date"),ty:"d"}];
 function add(rows){rows.forEach(function(r){
-if(r.n)c.push([r.n,fl(r.l)]);
-if(r.s)c.push([r.s,fl(r.l)+(r.n?" - "+t("style"):""),function(v){return v?ol(v):""}]);
-if(r.c)r.c.forEach(function(k){c.push([k,fl("pocket")+" - "+fl(k),function(v){return v==="1"?"\u2713":""}])})})}
-add(SHIRT);add(SHALWAR);c.push(["notes",t("notes")]);return c}
+if(r.n)c.push({k:r.n,h:fl(r.l),ty:"n"});
+if(r.s)c.push({k:r.s,h:fl(r.l)+(r.n?" - "+t("style"):""),ty:"s"});
+if(r.c)r.c.forEach(function(k){c.push({k:k,h:fl("pocket")+" - "+fl(k),ty:"c"})})})}
+add(SHIRT);add(SHALWAR);c.push({k:"notes",h:t("notes"),ty:"t"});return c}
+function csvVal(d,r){var v=r[d.k]==null?"":r[d.k];return d.ty==="s"?(v?ol(v):""):d.ty==="c"?(v==="1"?"\u2713":""):v}
+function cellHtml(d,r){
+var v=r[d.k]==null?"":r[d.k];
+if(d.ty==="s")return '<select data-k="'+d.k+'">'+selOpts(d.k).replace('value="'+v+'"','value="'+v+'" selected')+'</select>';
+if(d.ty==="c")return '<input type="checkbox" data-k="'+d.k+'"'+(v==="1"?" checked":"")+'>';
+if(d.ty==="d")return '<input type="date" data-k="'+d.k+'" value="'+esc(v)+'">';
+return '<input data-k="'+d.k+'" value="'+esc(v)+'"'+(d.ty==="n"?' inputmode="decimal" dir="ltr"':'')+'>'}
+function renderSheet(list){
+var tb=document.getElementById("sheet");
+if(VIEW!=="sheet"){tb.innerHTML="";return}
+if(document.activeElement&&tb.contains(document.activeElement))return;
+var defs=colDefs();
+var h='<thead><tr>'+defs.map(function(d,i){return '<th class="'+(i<2?"sk"+(i+1):"")+'">'+esc(d.h)+'</th>'}).join("")+'<th></th></tr></thead>';
+var b='<tbody>'+list.map(function(r){return '<tr data-id="'+r.id+'">'+defs.map(function(d,i){return '<td class="'+(i<2?"sk"+(i+1):"")+'">'+cellHtml(d,r)+'</td>'}).join("")+'<td><button type="button" class="x" data-del="'+r.id+'">\u2715</button></td></tr>'}).join("")+'</tbody>';
+tb.innerHTML=h+b}
+function applyView(){
+document.getElementById("sheetwrap").hidden=VIEW!=="sheet";
+document.getElementById("listwrap").hidden=VIEW==="sheet";
+document.getElementById("viewb").textContent=VIEW==="sheet"?t("listV"):t("sheetV");
+var cf=window.NAAP_CONFIG||{};document.getElementById("syncb").hidden=!!(cf.url&&cf.key)&&location.hash!=="#setup"}
+document.getElementById("viewb").onclick=function(){
+VIEW=VIEW==="sheet"?"list":"sheet";
+try{localStorage.setItem("naap-view",VIEW)}catch(e){}
+render()};
+window.addEventListener("hashchange",applyView);
+document.getElementById("sheet").addEventListener("change",function(e){
+var el=e.target,k=el.getAttribute("data-k");if(!k)return;
+var id=el.closest("tr").getAttribute("data-id");
+var r=recs.filter(function(x){return x.id===id})[0];if(!r)return;
+r[k]=el.type==="checkbox"?(el.checked?"1":""):el.value.trim();
+r.updatedAt=Date.now();save();queueSync();
+if(k==="khata"){el.blur();render()}});
+document.getElementById("sheet").addEventListener("click",function(e){
+var id=e.target.getAttribute&&e.target.getAttribute("data-del");if(!id)return;
+var r=recs.filter(function(x){return x.id===id})[0];
+if(r&&confirm(t("delq"))){r.deleted=true;r.updatedAt=Date.now();save();render();queueSync()}});
 function saveFile(name,data){
 var type=name.slice(-4)===".csv"?"text/csv;charset=utf-8":"application/json";
 var u=URL.createObjectURL(new Blob([data],{type:type}));
 var a=document.createElement("a");a.href=u;a.download=name;document.body.appendChild(a);a.click();a.remove();
 setTimeout(function(){URL.revokeObjectURL(u)},1500)}
 document.getElementById("xcsv").onclick=function(){
-var live=recs.filter(function(r){return !r.deleted});
+var live=recs.filter(function(r){return !r.deleted});live.sort(byK);
 if(!live.length){alert(t("none"));return}
-var c=cols(),lines=[c.map(function(x){return cell(x[1])}).join(",")];
-live.forEach(function(r){lines.push(c.map(function(x){return cell(x[2]?x[2](r[x[0]]):r[x[0]])}).join(","))});
+var c=colDefs(),lines=[c.map(function(x){return cell(x.h)}).join(",")];
+live.forEach(function(r){lines.push(c.map(function(x){return cell(csvVal(x,r))}).join(","))});
 saveFile("naap-register-"+today()+".csv","\ufeff"+lines.join("\r\n"))};
 document.getElementById("xjson").onclick=function(){
-var live=recs.filter(function(r){return !r.deleted});
+var live=recs.filter(function(r){return !r.deleted});live.sort(byK);
 if(!live.length){alert(t("none"));return}
 saveFile("naap-backup-"+today()+".json",JSON.stringify(live,null,1))};
 document.getElementById("impb").onclick=function(){document.getElementById("imp").click()};
@@ -245,8 +313,11 @@ var msg=LANG==="ur"?a.length+" "+t("restore"):a.length+" "+t("restore");
 if(!confirm(msg))return;
 recs=a.map(function(r){r.updatedAt=Date.now();r.deleted=false;return r});save();render();queueSync()}catch(x){alert(t("bad"))}};
 rd.readAsText(fl2);e.target.value=""};
-var SK="naap-sync",syncT=null,syncing=false,lastSt="stNone",lastExtra="";
-function cfg(){try{return JSON.parse(localStorage.getItem(SK)||"null")}catch(e){return null}}
+var SK="naap-sync",LASTK="naap-last",syncT=null,syncing=false,lastSt="stNone",lastExtra="";
+function cfg(){var l=null;try{l=JSON.parse(localStorage.getItem(SK)||"null")}catch(e){}
+if(l&&l.url&&l.key)return l;
+var d=window.NAAP_CONFIG||{};
+return d.url&&d.key?{url:d.url,key:d.key}:null}
 function setSt(k,extra){lastSt=k;lastExtra=extra||"";document.getElementById("sst").textContent=t(k)+lastExtra}
 function queueSync(){clearTimeout(syncT);syncT=setTimeout(doSync,800)}
 function doSync(){
@@ -255,7 +326,7 @@ if(!c||!c.url||!c.key){setSt("stNone");return Promise.resolve()}
 if(syncing)return Promise.resolve();
 if(navigator.onLine===false){setSt("stOff");return Promise.resolve()}
 syncing=true;setSt("stBusy");
-var start=Date.now(),since=c.last||0;
+var start=Date.now(),since=0;try{since=Number(localStorage.getItem(LASTK))||0}catch(e){}
 var push=recs.filter(function(r){return (r.updatedAt||0)>since});
 return fetch(c.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({key:c.key,records:push})})
 .then(function(r){return r.json()})
@@ -268,8 +339,7 @@ var l=map[rr.id];
 if(!l){recs.push(rr)}else if(rr.updatedAt>(l.updatedAt||0)){recs[recs.indexOf(l)]=rr}});
 recs.sort(function(a,b){return (Number(b.id)||0)-(Number(a.id)||0)});
 save();
-c.last=start-2000;
-try{localStorage.setItem(SK,JSON.stringify(c))}catch(e){}
+try{localStorage.setItem(LASTK,String(start-2000))}catch(e){}
 render();
 setSt("stOk",new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))})
 .catch(function(e){var m=String((e&&e.message)||e||"");setSt("stErr"," ["+(m.indexOf("JSON")>-1||m.indexOf("token")>-1?"not JSON: check Anyone access / URL":m)+"]")})
@@ -283,10 +353,11 @@ dlg2.showModal()};
 document.getElementById("s_close").onclick=function(){dlg2.close()};
 document.getElementById("s_save").onclick=function(){
 var u=document.getElementById("s_url").value.trim(),k=document.getElementById("s_key").value.trim();
-try{if(u&&k)localStorage.setItem(SK,JSON.stringify({url:u,key:k,last:0}));else localStorage.removeItem(SK)}catch(e){}
-dlg2.close();doSync()};
+try{if(u&&k)localStorage.setItem(SK,JSON.stringify({url:u,key:k}));else localStorage.removeItem(SK);localStorage.removeItem(LASTK)}catch(e){}
+dlg2.close();applyView();doSync()};
 window.addEventListener("online",doSync);
 document.addEventListener("visibilitychange",function(){if(document.visibilityState==="visible")doSync()});
+if(navigator.storage&&navigator.storage.persist)navigator.storage.persist().catch(function(){});
 load();applyLang();doSync();
 if("serviceWorker" in navigator){window.addEventListener("load",function(){navigator.serviceWorker.register("sw.js").catch(function(){})})}
 </script>

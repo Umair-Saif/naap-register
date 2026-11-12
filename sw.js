@@ -1,5 +1,5 @@
-var CACHE = "naap-v4";
-var FILES = ["./", "index.html", "manifest.webmanifest", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];
+var CACHE = "naap-v8";
+var FILES = ["./", "index.html", "manifest.webmanifest", "config.js", "icon-192.png", "icon-512.png", "icon-maskable-512.png"];
 self.addEventListener("install", function (e) {
   e.waitUntil(caches.open(CACHE).then(function (c) { return c.addAll(FILES); }));
   self.skipWaiting();
