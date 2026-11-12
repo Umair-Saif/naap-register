@@ -5,7 +5,9 @@ var SECRET = "my_name_is_khan";
 var SHEET_NAME = "Records";
 var FIELDS = ["id","updatedAt","deleted","name","phone","date",
   "qameez","bazu","tera","ghera","collar","bain","chest",
-  "shalwar","plaza","ghera2","paancha1","paancha2","paancha3","notes"];
+  "shalwar","plaza","ghera2","paancha1","paancha2","paancha3","notes",
+  "khata","kanda","pajama","pahncha","bazu_style","ghera_style","collar_style","front",
+  "pk_front","pk_side","pk_shalwar"]; // new columns are always added at the END so old rows stay aligned
 
 function getSheet_() {
   var ss = SpreadsheetApp.getActiveSpreadsheet();
@@ -15,6 +17,12 @@ function getSheet_() {
     s.getRange(1, 1, s.getMaxRows(), FIELDS.length).setNumberFormat("@"); // keep text (phone 0300..., dates)
     s.appendRow(FIELDS);
     s.setFrozenRows(1);
+  }
+  // keep header row in sync when new fields are added later
+  var head = s.getRange(1, 1, 1, FIELDS.length).getValues()[0];
+  if (head.join("|") !== FIELDS.join("|")) {
+    s.getRange(1, 1, s.getMaxRows(), FIELDS.length).setNumberFormat("@");
+    s.getRange(1, 1, 1, FIELDS.length).setValues([FIELDS]);
   }
   return s;
 }
