@@ -234,7 +234,7 @@ var push=recs.filter(function(r){return (r.updatedAt||0)>since});
 return fetch(c.url,{method:"POST",headers:{"Content-Type":"text/plain;charset=utf-8"},body:JSON.stringify({key:c.key,records:push})})
 .then(function(r){return r.json()})
 .then(function(j){
-if(!j||!j.ok)throw new Error("sync");
+if(!j||!j.ok)throw new Error((j&&j.error)||"sync");
 var map={};recs.forEach(function(r){map[r.id]=r});
 j.records.forEach(function(rr){
 rr.id=String(rr.id);rr.updatedAt=Number(rr.updatedAt)||0;rr.deleted=(rr.deleted===true||rr.deleted==="true");
@@ -246,7 +246,7 @@ c.last=start-2000;
 try{localStorage.setItem(SK,JSON.stringify(c))}catch(e){}
 render();
 setSt("stOk",new Date().toLocaleTimeString([],{hour:"2-digit",minute:"2-digit"}))})
-.catch(function(){setSt("stErr")})
+.catch(function(e){var m=String((e&&e.message)||e||"");setSt("stErr"," ["+(m.indexOf("JSON")>-1||m.indexOf("token")>-1?"not JSON: check Anyone access / URL":m)+"]")})
 .then(function(){syncing=false})}
 var dlg2=document.getElementById("dlg2");
 document.getElementById("syncb").onclick=function(){
