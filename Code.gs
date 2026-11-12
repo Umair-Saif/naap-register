@@ -1,7 +1,7 @@
 // Naap Register - Google Sheet backend (Apps Script)
 // 1) Change SECRET below to your own long random text.
 // 2) Deploy > New deployment > Web app > Execute as: Me, Who has access: Anyone.
-var SECRET = "CHANGE_THIS_SECRET";
+var SECRET = "my_name_is_khan";
 var SHEET_NAME = "Records";
 var FIELDS = ["id","updatedAt","deleted","name","phone","date",
   "qameez","bazu","tera","ghera","collar","bain","chest",
